@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 # ─────────────────────────────────────────────────────
 #  KONFIGURASI — isi di Railway Variables
 # ─────────────────────────────────────────────────────
-DEEPSEEK_API_KEY  = os.getenv("DEEPSEEK_API_KEY", "")   # platform.deepseek.com
+GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY", "")       # aistudio.google.com
 TWELVE_DATA_KEY   = os.getenv("TWELVE_DATA_KEY", "")    # twelvedata.com
 TELEGRAM_TOKEN    = os.getenv("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID  = os.getenv("TELEGRAM_CHAT_ID", "")
@@ -31,8 +31,8 @@ TELEGRAM_CHAT_ID  = os.getenv("TELEGRAM_CHAT_ID", "")
 # ─────────────────────────────────────────────────────
 # Pair forex yang ingin dianalisa
 # Contoh: EUR/USD, GBP/USD, USD/JPY, XAU/USD (Gold)
-SYMBOL          = "EUR/USD"
-SYMBOL_TD       = "EUR/USD"    # Format Twelve Data
+SYMBOL          = "XAU/USD"
+SYMBOL_TD       = "XAU/USD"    # Format Twelve Data
 CHECK_INTERVAL  = 300          # Cek tiap 5 menit
 SL_PIPS         = 15           # Info SL untuk sinyal
 TP_RR           = 2.0          # Risk:Reward ratio
