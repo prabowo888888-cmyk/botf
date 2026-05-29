@@ -1,7 +1,7 @@
 """
 ================================================================================
   ICT AI SIGNAL BOT — VERSI FINAL
-  ✅ Google Gemini 1.5 Flash (analisa ICT)
+  ✅ Google gemini-2.0-flash (analisa ICT)
   ✅ Twelve Data (data harga forex realtime)
   ✅ Forex Factory News Filter
   ✅ Telegram (kirim sinyal ke HP)
@@ -245,11 +245,11 @@ def fmt_daily_news(news_list: list) -> str:
 
 
 # ══════════════════════════════════════════════════════
-#  GOOGLE GEMINI 1.5 FLASH — OTAK ANALISA ICT
+#  GOOGLE gemini-2.0-flash — OTAK ANALISA ICT
 # ══════════════════════════════════════════════════════
 
 def ask_gemini(market_data: str, news_context: str) -> dict:
-    """Kirim data ke Google Gemini 1.5 Flash untuk analisa ICT"""
+    """Kirim data ke Google gemini-2.0-flash untuk analisa ICT"""
 
     system_prompt = """Kamu adalah trader forex profesional dengan keahlian mendalam di strategi ICT (Inner Circle Trader).
 Tugasmu menganalisa data candlestick dan memberikan sinyal trading yang akurat.
@@ -300,7 +300,7 @@ Berikan analisa ICT lengkap dan sinyal trading dalam format JSON."""
 
     try:
         r = requests.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}",
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}",
             headers={"Content-Type": "application/json"},
             json={
                 "contents": [{"parts": [{"text": full_prompt}]}],
@@ -402,7 +402,7 @@ Hindari entry manual saat berita besar!"""
 def run_bot():
     log.info("=" * 55)
     log.info("  📡 ICT AI SIGNAL BOT")
-    log.info(f"  Pair  : {SYMBOL} | Otak: Google Gemini 1.5 Flash")
+    log.info(f"  Pair  : {SYMBOL} | Otak: Google gemini-2.0-flash")
     log.info(f"  Data  : Twelve Data | Sinyal → Telegram")
     log.info("=" * 55)
 
