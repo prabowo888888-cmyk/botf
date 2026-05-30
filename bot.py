@@ -149,54 +149,47 @@ def pip() -> float:
 # ══════════════════════════════════════════════════════
 
 def analyze_dxy() -> dict:
-    """
-    Analisa Dollar Index (DXY)
-    Gold berlawanan dengan DXY:
-    - DXY naik  → Gold cenderung TURUN (bearish bias)
-    - DXY turun → Gold cenderung NAIK  (bullish bias)
-    """
+
+    """Ambil DXY dari Yahoo Finance (gratis, tanpa API key)"""
     try:
-        candles = get_candles(DXY_SYMBOL, "1h", count=50)
-        if not candles:
-            return {"trend": "UNKNOWN", "bias": "NEUTRAL", "detail": "Data DXY tidak tersedia"}
+        r = requests.get(
+            "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB",
+            params={"interval": "1h", "range": "5d"},
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=15
+        )
+        r.raise_for_status()
+        data   = r.json()
+        closes = data["chart"]["result"][0]["indicators"]["quote"][0]["close"]
+        closes = [c for c in closes if c is not None]
 
-        dxy = parse(candles)
-        closes = dxy["close"]
-        n      = len(closes)
+        if len(closes) < 20:
+            return {"trend":"UNKNOWN","bias":"NEUTRAL","detail":"Data DXY kurang"}
 
-        if n < DXY_TREND_LOOKBACK:
-            return {"trend": "UNKNOWN", "bias": "NEUTRAL", "detail": "Data DXY kurang"}
+        ma_fast  = sum(closes[-5:])  / 5
+        ma_slow  = sum(closes[-20:]) / 20
+        current  = closes[-1]
+        prev     = closes[-10]
+        change   = ((current - prev) / prev) * 100
 
-        # Tren DXY berdasarkan MA
-        ma_fast = sum(closes[-5:])  / 5
-        ma_slow = sum(closes[-20:]) / 20
-        current = closes[-1]
-        prev    = closes[-10]
-
-        # Momentum DXY
-        dxy_change_pct = ((current - prev) / prev) * 100
-
-        if ma_fast > ma_slow and current > ma_slow:
-            dxy_trend = "BULLISH"  # DXY naik → Gold bearish
-            gold_bias = "BEARISH"
-        elif ma_fast < ma_slow and current < ma_slow:
-            dxy_trend = "BEARISH"  # DXY turun → Gold bullish
-            gold_bias = "BULLISH"
+        if ma_fast > ma_slow:
+            trend = "BULLISH"; bias = "BEARISH"
+        elif ma_fast < ma_slow:
+            trend = "BEARISH"; bias = "BULLISH"
         else:
-            dxy_trend = "RANGING"
-            gold_bias = "NEUTRAL"
+            trend = "RANGING"; bias = "NEUTRAL"
 
         return {
-            "trend":      dxy_trend,
-            "bias":       gold_bias,  # Bias untuk Gold
+            "trend":      trend,
+            "bias":       bias,
             "current":    current,
-            "change_pct": round(dxy_change_pct, 3),
-            "detail":     f"DXY: {current:.3f} ({dxy_change_pct:+.3f}%) → Gold bias {gold_bias}"
+            "change_pct": round(change, 3),
+            "detail":     f"DXY: {current:.3f} ({change:+.3f}%) → Gold bias {bias}"
         }
 
     except Exception as e:
-        log.error(f"DXY error: {e}")
-        return {"trend": "UNKNOWN", "bias": "NEUTRAL", "detail": str(e)}
+        log.error(f"DXY Yahoo error: {e}")
+        return {"trend":"UNKNOWN","bias":"NEUTRAL","detail":str(e)}
 
 
 # ══════════════════════════════════════════════════════
